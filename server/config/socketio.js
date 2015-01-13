@@ -18,8 +18,8 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/opinion/opinion.socket').register(socket);
   require('../api/idea/idea.socket').register(socket);
-  require('../api/thing/thing.socket').register(socket);
 }
 
 module.exports = function (socketio) {
