@@ -6,8 +6,8 @@ var mongoose = require('mongoose'),
 var IdeaSchema = new Schema({
   name: String,
   owner: String,
-  keywords: [],
-  Summary: String,
+  keywords: [String],
+  summary: String,
   overview_url : String
 });
 
