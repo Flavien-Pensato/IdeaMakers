@@ -1,6 +1,7 @@
 'use strict';
 
 var should = require('should');
+var request = require('supertest');
 var app = require('../../app');
 var User = require('./user.model');
 
@@ -58,3 +59,15 @@ describe('User Model', function() {
     return user.authenticate('blah').should.not.be.true;
   });
 });
+
+
+function loggedUser(callback) {
+  var server = request.agent(app);
+
+  server
+    .post('/local')
+    .send({ email: 'test@test.com', password: 'test' })
+    .end(function() {
+      callback(server);
+    });
+}
