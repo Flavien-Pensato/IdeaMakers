@@ -9,8 +9,8 @@ module.exports = {
   DOMAIN:           'http://localhost:9000',
   SESSION_SECRET:   'ideamakers-secret',
 
-  FACEBOOK_ID:      'app-id',
-  FACEBOOK_SECRET:  'secret',
+  FACEBOOK_ID:      process.env.FACEBOOK_ID || undefined,
+  FACEBOOK_SECRET:  process.env.FACEBOOK_SECRET || undefined,
 
   TWITTER_ID:       'app-id',
   TWITTER_SECRET:   'secret',
