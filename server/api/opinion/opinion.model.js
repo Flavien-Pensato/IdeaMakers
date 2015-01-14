@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 var OpinionSchema = new Schema({
   owner: String,
   idea: String,
-  type: {type: String, enum: ['LIKE', 'DISLIkE']}
+  type: {type: String, enum: ['LIKE', 'DISLIKE']}
 });
 
 module.exports = mongoose.model('Opinion', OpinionSchema);
