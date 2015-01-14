@@ -5,19 +5,46 @@ var Idea = require('./idea.model');
 
 // Get list of ideas
 exports.index = function(req, res) {
-  Idea.find(function (err, ideas) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, ideas);
-  });
+
+  var newGetter = function() {
+    Idea
+      .find()
+      .sort("_id")
+      .limit(10)
+      .exec(sendResults(res, {category: "new"}));
+  }
+
+  var opinionGetter = function(showLiked) {
+    Idea
+      .find()
+      .sort("_id")
+      .limit(10)
+      .exec(sendResults(res, {category: showLiked ? "liked" : "disliked"}));
+  }
+
+  var hotGetter = function() {
+    Idea
+      .find()
+      .sort("_id")
+      .limit(10)
+      .exec(sendResults(res, {category: "hot"}));
+  }
+
+  var categoriesGetter = {
+    'new': newGetter,
+    'liked': opinionGetter.bind(this, true),
+    'disliked': opinionGetter.bind(this, false),
+    'hot': hotGetter
+  };
+
+  (categoriesGetter[req.param('category')] || categoriesGetter['new'])()
 };
 
 // Get a single idea
 exports.show = function(req, res) {
-  Idea.findById(req.params.id, function (err, idea) {
-    if(err) { return handleError(res, err); }
-    if(!idea) { return res.send(404); }
-    return res.json(idea);
-  });
+  Idea
+    .findById(req.params.id)
+    .exec(sendResults(res));
 };
 
 // Creates a new idea in the DB.
@@ -56,4 +83,15 @@ exports.destroy = function(req, res) {
 
 function handleError(res, err) {
   return res.send(500, err);
+}
+
+function sendResults(res, wrapper) {
+  return function(err, results) {
+    if (err) { return handleError(res, err); }
+    if (!results) { return res.send(404); }
+    if (wrapper)
+      return res.json(200, _.assign(wrapper, {content: results}));
+    else
+      return res.json(200, results);
+  }
 }

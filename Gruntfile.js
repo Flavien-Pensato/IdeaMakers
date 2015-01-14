@@ -71,7 +71,12 @@ module.exports = function (grunt) {
       },
       mochaTest: {
         files: ['server/**/*.spec.js'],
-        tasks: ['env:test', 'mochaTest']
+        tasks: ['mochaTest'],
+        options: {
+          spawn: true,
+          interrupt: true,
+          debounceDelay: 250
+        },
       },
       jsTest: {
         files: [
@@ -121,9 +126,10 @@ module.exports = function (grunt) {
       },
       express: {
         files: [
-          'server/**/*.{js,json}'
+          'server/**/*.{js,json}',
+          '!server/**/*.spec.js'
         ],
-        tasks: ['express:dev', 'wait'],
+        tasks: ['express:dev', 'wait', 'mochaTest'],
         options: {
           livereload: true,
           nospawn: true //Without this option specified express won't be reloaded
@@ -451,7 +457,8 @@ module.exports = function (grunt) {
 
     mochaTest: {
       options: {
-        reporter: 'spec'
+        reporter: 'spec',
+        clearRequireCache: true
       },
       src: ['server/**/*.spec.js']
     },

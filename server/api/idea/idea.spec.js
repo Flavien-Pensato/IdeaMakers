@@ -18,17 +18,47 @@ describe('GET /api/ideas', function() {
       .end(done);
   });
 
-  it('should respond with JSON array', function(done) {
+  it('should respond with new ideas', function(done) {
     request(app)
       .get('/api/ideas')
       .set('authorization', 'Bearer ' + usersHelpers.infos.token)
       .expect(200)
       .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) return done(err);
-        res.body.should.be.instanceof(Array);
-        done();
-      });
+      .expect(function(res) {
+        res.body.should.be.instanceof(Object);
+        res.body.category.should.be.equal("new")
+        res.body.content.should.be.instanceof(Array)
+      })
+      .end(done);
   });
+
+  var ideaId =
+  it('should show new ideas', function(done) {
+    request(app)
+      .get('/api/ideas?category=hot')
+      .set('authorization', 'Bearer ' + usersHelpers.infos.token)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(function(res) {
+        res.body.should.be.instanceof(Object)
+        res.body.category.should.be.equal("hot")
+        res.body.content.should.be.instanceof(Array)
+        ideaId = res.body.content[0]._id;
+      })
+      .end(done);
+  });
+
+  it('should show an idea', function(done) {
+    request(app)
+      .get('/api/ideas/' + ideaId)
+      .set('authorization', 'Bearer ' + usersHelpers.infos.token)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(function(res) {
+        res.body.should.be.instanceof(Object)
+      })
+      .end(done);
+  });
+
 
 });
