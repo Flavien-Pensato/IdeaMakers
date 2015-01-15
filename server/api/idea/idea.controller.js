@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Idea = require('./idea.model');
+var helpers = require('../../helpers');
 
 // Get list of ideas
 exports.index = function(req, res) {
@@ -11,7 +12,7 @@ exports.index = function(req, res) {
       .find()
       .sort("_id")
       .limit(10)
-      .exec(sendResults(res, {category: "new"}));
+      .exec(helpers.sendResults(res, {category: "new"}));
   }
 
   var opinionGetter = function(showLiked) {
@@ -19,7 +20,7 @@ exports.index = function(req, res) {
       .find()
       .sort("_id")
       .limit(10)
-      .exec(sendResults(res, {category: showLiked ? "liked" : "disliked"}));
+      .exec(helpers.sendResults(res, {category: showLiked ? "liked" : "disliked"}));
   }
 
   var hotGetter = function() {
@@ -27,7 +28,7 @@ exports.index = function(req, res) {
       .find()
       .sort("_id")
       .limit(10)
-      .exec(sendResults(res, {category: "hot"}));
+      .exec(helpers.sendResults(res, {category: "hot"}));
   }
 
   var categoriesGetter = {
@@ -42,9 +43,11 @@ exports.index = function(req, res) {
 
 // Get a single idea
 exports.show = function(req, res) {
+  if (!helpers.isObjectId(req.params.id))
+    return helpers.handleNotFound(res);
   Idea
     .findById(req.params.id)
-    .exec(sendResults(res));
+    .exec(helpers.sendResults(res));
 };
 
 // Creates a new idea in the DB.
@@ -80,18 +83,3 @@ exports.destroy = function(req, res) {
     });
   });
 };
-
-function handleError(res, err) {
-  return res.send(500, err);
-}
-
-function sendResults(res, wrapper) {
-  return function(err, results) {
-    if (err) { return handleError(res, err); }
-    if (!results) { return res.send(404); }
-    if (wrapper)
-      return res.json(200, _.assign(wrapper, {content: results}));
-    else
-      return res.json(200, results);
-  }
-}

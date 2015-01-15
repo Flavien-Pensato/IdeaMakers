@@ -8,5 +8,5 @@ module.exports = {
     uri: 'mongodb://localhost/ideamakers-dev'
   },
 
-  seedDB: true
+  seedDB: false
 };

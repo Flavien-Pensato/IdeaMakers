@@ -132,7 +132,8 @@ module.exports = function (grunt) {
         tasks: ['express:dev', 'wait', 'mochaTest'],
         options: {
           livereload: true,
-          nospawn: true //Without this option specified express won't be reloaded
+          nospawn: true, //Without this option specified express won't be reloaded
+          interrupt: true
         }
       }
     },
